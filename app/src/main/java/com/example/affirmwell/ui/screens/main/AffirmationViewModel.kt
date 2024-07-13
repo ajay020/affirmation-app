@@ -1,19 +1,54 @@
 package com.example.affirmwell.ui.screens.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class AffirmationViewModel : ViewModel() {
-    private val _affirmations = MutableStateFlow(listOf("You are strong", "You are capable", "You are loved"))
-    val affirmations: StateFlow<List<String>> get() = _affirmations
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.affirmwell.AffirmationApplication
+import com.example.affirmwell.data.Affirmation
+import com.example.affirmwell.data.AffirmationRepository
+import kotlinx.coroutines.launch
 
-    private val _selectedCategory = MutableStateFlow("General")
-    val selectedCategory: StateFlow<String> get() = _selectedCategory
+class AffirmationViewModel(val repository: AffirmationRepository) : ViewModel() {
+    private val _affirmations = MutableStateFlow<List<Affirmation>>(emptyList())
+    val affirmations: StateFlow<List<Affirmation>> get() = _affirmations
 
-    fun changeCategory() {
-        // Logic to change the category and update affirmations
-        _selectedCategory.value = "New Category"
-        _affirmations.value = listOf("New affirmation 1", "New affirmation 2")
+    private fun loadAffirmationsByCategory(category: String) {
+        viewModelScope.launch {
+            _affirmations.value = repository.getAffirmationsByCategory(category)
+            Log.d("AffirmationViewModel", "Affirmations loaded: $affirmations.value")
+        }
+    }
+
+    init {
+        loadAffirmationsByCategory("Anxiety")
+    }
+
+    fun addCustomAffirmation(text: String, category: String) {
+        viewModelScope.launch {
+            repository.addCustomAffirmation(
+                Affirmation(
+                    text = text,
+                    category = category,
+                    isCustom = true
+                )
+            )
+            loadAffirmationsByCategory(category)
+        }
+    }
+
+    companion object {
+        var Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY]) as AffirmationApplication
+                AffirmationViewModel(application.container.affirmationRepository)
+            }
+        }
     }
 }
