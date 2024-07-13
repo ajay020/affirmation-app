@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface AffirmationDao {
@@ -15,4 +16,10 @@ interface AffirmationDao {
 
     @Insert
     suspend fun insertAffirmation(affirmation: Affirmation)
+
+    @Update
+    suspend fun updateAffirmation(affirmation: Affirmation)
+
+    @Query("SELECT * FROM affirmations WHERE isFavorite = 1")
+    suspend fun getFavoriteAffirmations(): List<Affirmation>
 }

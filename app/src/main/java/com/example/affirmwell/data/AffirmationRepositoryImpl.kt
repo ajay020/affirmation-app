@@ -16,6 +16,14 @@ class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao  ) : 
         }
     }
 
+    override suspend fun updateAffirmation(affirmation: Affirmation) {
+        affirmationDao.updateAffirmation(affirmation)
+    }
+
+    override suspend fun getAffirmations(): List<Affirmation> {
+        return affirmationDao.getFavoriteAffirmations()
+    }
+
     private fun parseAffirmations(json: String): List<Affirmation> {
         val jsonObject = JSONObject(json)
         val affirmations = mutableListOf<Affirmation>()

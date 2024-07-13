@@ -7,9 +7,11 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,27 +34,44 @@ import com.example.affirmwell.data.Affirmation
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: AffirmationViewModel = viewModel(factory = AffirmationViewModel.Factory )
+    viewModel: AffirmationViewModel = viewModel(factory = AffirmationViewModel.Factory)
 ) {
     val affirmations by viewModel.affirmations.collectAsState()
 
-    val pagerState = rememberPagerState(pageCount = {
-        affirmations.size
-    })
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = {
+            affirmations.size
+        }
+    )
 
     Scaffold(
         topBar = {
             AffirmationTopBar()
         },
         bottomBar = {
-            AffirmationBottomAppBar()
+            if (affirmations.isNotEmpty()) {
+                AffirmationBottomAppBar(
+                    affirmation = affirmations[pagerState.currentPage],
+                    onToggleFavorite = { viewModel.toggleFavorite(it) }
+                )
+            }
+
         }
     ) {
-        AffirmationPager(
-            affirmations = affirmations,
-            pagerState = pagerState,
-            modifier = Modifier.padding(it)
-        )
+        if (affirmations.isNotEmpty()) {
+            AffirmationPager(
+                affirmations = affirmations,
+                pagerState = pagerState,
+                modifier = Modifier.padding(it)
+            )
+        } else {
+            // Show a loading indicator or empty state
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = "No affirmations available.")
+            }
+        }
     }
 }
 
@@ -82,7 +101,11 @@ fun AffirmationPager(
 }
 
 @Composable
-fun AffirmationBottomAppBar() {
+fun AffirmationBottomAppBar(
+    modifier: Modifier = Modifier,
+    affirmation: Affirmation,
+    onToggleFavorite: (Affirmation) -> Unit
+) {
     BottomAppBar(
         modifier = Modifier
             .background(Color.Transparent)
@@ -90,8 +113,11 @@ fun AffirmationBottomAppBar() {
         IconButton(onClick = { /* Handle menu click */ }) {
             Icon(Icons.Filled.Share, contentDescription = "Share")
         }
-        IconButton(onClick = { /* Handle menu click */ }) {
-            Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Favourite")
+        IconButton(onClick = { onToggleFavorite(affirmation) }) {
+            Icon(
+                if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = "Favourite"
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { /* Handle menu click */ }) {
@@ -104,7 +130,7 @@ fun AffirmationBottomAppBar() {
 @Composable
 fun AffirmationTopBar(modifier: Modifier = Modifier) {
     TopAppBar(
-        title = { Text("AffirmWell")},
+        title = { Text("AffirmWell") },
         actions = {
             IconButton(onClick = { /* Handle menu click */ }) {
                 Icon(Icons.Filled.Settings, contentDescription = "Menu")

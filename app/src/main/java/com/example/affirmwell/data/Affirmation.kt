@@ -8,6 +8,7 @@ data class Affirmation(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val category: String,
     val text: String,
-    val isCustom: Boolean = false
+    val isCustom: Boolean = false,
+    var isFavorite: Boolean = false
 )
 
