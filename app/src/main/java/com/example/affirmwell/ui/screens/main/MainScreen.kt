@@ -1,12 +1,14 @@
 package com.example.affirmwell.ui.screens.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
@@ -25,18 +27,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.affirmwell.R
 import com.example.affirmwell.data.Affirmation
+import com.example.affirmwell.utils.Utils
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    modifier: Modifier = Modifier,
     viewModel: AffirmationViewModel = viewModel(factory = AffirmationViewModel.Factory)
 ) {
     val affirmations by viewModel.affirmations.collectAsState()
+    val selectedBackgroundImage = remember { mutableStateOf<Int?>(null) }
+    var showImagePicker by remember { mutableStateOf(false) }
+
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -54,23 +64,57 @@ fun MainScreen(
             if (affirmations.isNotEmpty()) {
                 AffirmationBottomAppBar(
                     affirmation = affirmations[pagerState.currentPage],
-                    onToggleFavorite = { viewModel.toggleFavorite(it) }
+                    onToggleFavorite = { viewModel.toggleFavorite(it) },
+                    onClick = { showImagePicker = true }
                 )
             }
 
         }
     ) {
         if (affirmations.isNotEmpty()) {
-            AffirmationPager(
-                affirmations = affirmations,
-                pagerState = pagerState,
-                modifier = Modifier.padding(it)
-            )
+            Box(
+                modifier = Modifier
+            ) {
+                selectedBackgroundImage.value?.let { imageRes ->
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                Column {
+                    AffirmationPager(
+                        affirmations = affirmations,
+                        pagerState = pagerState,
+                        modifier = Modifier
+                            .padding(it)
+                            .weight(1f)
+                    )
+                }
+            }
+
         } else {
             // Show a loading indicator or empty state
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(text = "No affirmations available.")
             }
+        }
+
+        if (showImagePicker) {
+            FullScreenImagePickerDialog(
+                images = Utils.images,
+                onDismissRequest = { showImagePicker = false },
+                onImageSelected = { imageRes ->
+                    selectedBackgroundImage.value = imageRes
+                }
+            )
         }
     }
 }
@@ -104,7 +148,8 @@ fun AffirmationPager(
 fun AffirmationBottomAppBar(
     modifier: Modifier = Modifier,
     affirmation: Affirmation,
-    onToggleFavorite: (Affirmation) -> Unit
+    onToggleFavorite: (Affirmation) -> Unit,
+    onClick: () -> Unit
 ) {
     BottomAppBar(
         modifier = Modifier
@@ -120,11 +165,49 @@ fun AffirmationBottomAppBar(
             )
         }
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(onClick = { /* Handle menu click */ }) {
+        IconButton(onClick = { onClick() }) {
             Icon(Icons.Filled.Menu, contentDescription = "Menu")
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FullScreenImagePickerDialog(
+    images: List<Int>,
+    onDismissRequest: () -> Unit,
+    onImageSelected: (Int) -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+            Column {
+                TopAppBar(
+                    title = { Text("Select Background Image") },
+                    navigationIcon = {
+                        IconButton(onClick = { onDismissRequest() }) {
+                            Icon(Icons.Default.Close, contentDescription = "Close")
+                        }
+                    }
+                )
+                BackgroundImagePicker(
+                    images = images,
+                    onImageSelected = { imageRes ->
+                        onImageSelected(imageRes)
+                        onDismissRequest()
+                    }
+                )
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -149,5 +232,5 @@ private fun MainScreenPreview() {
 @Composable
 fun MyBottomAppBarPreview() {
 //    AffirmationBottomAppBar()
-    AffirmationTopBar()
+//    AffirmationTopBar()
 }
