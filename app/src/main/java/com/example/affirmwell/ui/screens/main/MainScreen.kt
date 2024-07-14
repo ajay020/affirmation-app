@@ -41,6 +41,7 @@ import com.example.affirmwell.utils.Utils
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
+    onNavigateToSettings: () -> Unit,
     viewModel: AffirmationViewModel = viewModel(factory = AffirmationViewModel.Factory)
 ) {
     val affirmations by viewModel.affirmations.collectAsState()
@@ -58,7 +59,10 @@ fun MainScreen(
 
     Scaffold(
         topBar = {
-            AffirmationTopBar()
+            AffirmationTopBar(
+                modifier = Modifier.background(Color.Transparent),
+                onNavigateToSettings = onNavigateToSettings
+            )
         },
         bottomBar = {
             if (affirmations.isNotEmpty()) {
@@ -211,11 +215,14 @@ fun FullScreenImagePickerDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AffirmationTopBar(modifier: Modifier = Modifier) {
+fun AffirmationTopBar(
+    modifier: Modifier = Modifier,
+    onNavigateToSettings: () -> Unit
+) {
     TopAppBar(
         title = { Text("AffirmWell") },
         actions = {
-            IconButton(onClick = { /* Handle menu click */ }) {
+            IconButton(onClick = onNavigateToSettings) {
                 Icon(Icons.Filled.Settings, contentDescription = "Menu")
             }
         }
@@ -225,7 +232,9 @@ fun AffirmationTopBar(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(
+        onNavigateToSettings = {}
+    )
 }
 
 @Preview
