@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,10 +41,10 @@ import com.example.affirmwell.utils.Utils
 @Composable
 fun MainScreen(
     onNavigateToSettings: () -> Unit,
-    viewModel: AffirmationViewModel = viewModel(factory = AffirmationViewModel.Factory)
+    viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory)
 ) {
     val affirmations by viewModel.affirmations.collectAsState()
-    val selectedBackgroundImage = remember { mutableStateOf<Int?>(null) }
+    val backgroundImageRes by viewModel.backgroundImageRes.collectAsState(initial = R.drawable.img1)
     var showImagePicker by remember { mutableStateOf(false) }
 
 
@@ -79,14 +78,12 @@ fun MainScreen(
             Box(
                 modifier = Modifier
             ) {
-                selectedBackgroundImage.value?.let { imageRes ->
-                    Image(
-                        painter = painterResource(id = imageRes),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                Image(
+                    painter = painterResource(id = backgroundImageRes),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
 
                 Column {
                     AffirmationPager(
@@ -116,7 +113,7 @@ fun MainScreen(
                 images = Utils.images,
                 onDismissRequest = { showImagePicker = false },
                 onImageSelected = { imageRes ->
-                    selectedBackgroundImage.value = imageRes
+                    viewModel.saveBackgroundImageInDataStore(imageRes)
                 }
             )
         }

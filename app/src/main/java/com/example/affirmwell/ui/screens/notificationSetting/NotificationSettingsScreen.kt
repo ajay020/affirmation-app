@@ -1,8 +1,11 @@
 package com.example.affirmwell.ui.screens.notificationSetting
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -13,6 +16,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -20,6 +24,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,7 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationSettingsScreen(
-    viewModel: NotificationSettingsViewModel = viewModel(),
+    viewModel: NotificationSettingsViewModel = viewModel(factory = NotificationSettingsViewModel.Factory),
     onNavigateBack: () -> Unit
 ) {
     val numberOfNotifications by viewModel.numberOfNotifications.collectAsState()
@@ -48,6 +54,7 @@ fun NotificationSettingsScreen(
         }
     ) { paddingValues ->
         Column(
+            verticalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
                 .padding(paddingValues)
                 .padding(16.dp)
@@ -120,25 +127,34 @@ fun DaysOfWeekSelector(
     selectedDays: Set<String>,
     onDayToggle: (String) -> Unit
 ) {
-    val daysOfWeek =
-        listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
-    Column {
-        Text("Days of the Week")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         daysOfWeek.forEach { day ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            val isSelected = selectedDays.contains(day)
+            val backgroundColor = if (isSelected) Color.Blue else Color.Gray
+            val contentColor = if (isSelected) Color.White else Color.Black
+
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onDayToggle(day) }
-                    .padding(vertical = 8.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(backgroundColor)
+                    .clickable { onDayToggle(day) },
+                contentAlignment = Alignment.Center
             ) {
-                Checkbox(
-                    checked = selectedDays.contains(day),
-                    onCheckedChange = { onDayToggle(day) }
+                Text(
+                    text = day,
+                    color = contentColor,
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                Text(day)
             }
         }
     }
 }
+

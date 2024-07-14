@@ -81,6 +81,9 @@ dependencies {
     // To use Kotlin Symbol Processing (KSP)
     ksp(libs.androidx.room.compiler)
 
+    // Data store
+    implementation(libs.androidx.datastore.preferences)
+
 
 
     // test
