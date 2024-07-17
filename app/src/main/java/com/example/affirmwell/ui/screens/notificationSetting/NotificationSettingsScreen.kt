@@ -17,7 +17,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -27,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.affirmwell.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +45,8 @@ fun NotificationSettingsScreen(
     val startTime by viewModel.startTime.collectAsState()
     val endTime by viewModel.endTime.collectAsState()
     val selectedDays by viewModel.selectedDays.collectAsState()
+    val notificationsEnabled by viewModel.notificationsEnabled.collectAsState()
+    val sliderPosition by viewModel.sliderPosition.collectAsState()
 
     Scaffold(
         topBar = {
@@ -53,38 +60,101 @@ fun NotificationSettingsScreen(
             )
         }
     ) { paddingValues ->
-        Column(
-            verticalArrangement = Arrangement.SpaceAround,
+        SettingsContent(
+            modifier = Modifier.padding(paddingValues),
+            startTime = startTime,
+            endTime = endTime,
+            numberOfNotifications = numberOfNotifications,
+            selectedDays = selectedDays,
+            sliderPosition = sliderPosition,
+            notificationsEnabled = notificationsEnabled,
+            toggleNotificationEnabled = { viewModel.toggleNotificationsEnabled() },
+            onSliderValueChange = { range ->
+                viewModel.onSliderValueChange(start = range.start, end = range.endInclusive)
+            },
+            setNumberOfNotifications = { viewModel.setNumberOfNotifications(it) },
+            toggleDays = { viewModel.toggleDay(it) }
+
+        )
+    }
+}
+
+@Composable
+fun SettingsContent(
+    modifier: Modifier = Modifier,
+    startTime: String,
+    endTime: String,
+    selectedDays: Set<String>,
+    numberOfNotifications: Int,
+    sliderPosition: Pair<Float, Float>,
+    notificationsEnabled: Boolean,
+    toggleNotificationEnabled: () -> Unit,
+    onSliderValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
+    setNumberOfNotifications: (Int) -> Unit,
+    toggleDays: (String) -> Unit
+
+) {
+    Column(
+        verticalArrangement = Arrangement.SpaceAround,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+//                .background(Color.Gray)
         ) {
-            NumberOfNotificationsInput(
-                numberOfNotifications = numberOfNotifications,
-                onNumberChange = { viewModel.setNumberOfNotifications(it) }
+            Text("Enable Notifications")
+            Switch(
+                checked = notificationsEnabled,
+                onCheckedChange = { toggleNotificationEnabled() },
+                modifier = Modifier
             )
-            TimeInput(
-                label = "Start Time",
-                time = startTime,
-                onTimeChange = { viewModel.setStartTime(it) }
-            )
-            TimeInput(
-                label = "End Time",
-                time = endTime,
-                onTimeChange = { viewModel.setEndTime(it) }
-            )
-            DaysOfWeekSelector(
-                selectedDays = selectedDays,
-                onDayToggle = { viewModel.toggleDay(it) }
-            )
-            Button(
-                onClick = { viewModel.saveSettings() },
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                Text("Save Settings")
-            }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        // Slider for selecting start and end times
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+//                .background(Color.Gray)
+        ) {
+            Text(text = "Start Time:  $startTime")
+            Text(text = "End Time:  $endTime")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+
+        RangeSlider(
+            value = sliderPosition.first..sliderPosition.second,
+            onValueChange = onSliderValueChange,
+            valueRange = 0f..24f,  // Assuming time range from 0 to 24 hours
+            steps = 23,  // To divide slider into 1-hour intervals,
+            enabled = notificationsEnabled,
+            modifier = Modifier
+                .fillMaxWidth()
+//                .background(Color.Gray)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        NumberOfNotificationsInput(
+            numberOfNotifications = numberOfNotifications,
+            onNumberChange = setNumberOfNotifications
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DaysOfWeekSelector(
+            selectedDays = selectedDays,
+            onDayToggle = toggleDays
+        )
+
     }
 }
 
@@ -94,9 +164,11 @@ fun NumberOfNotificationsInput(
     onNumberChange: (Int) -> Unit
 ) {
     Column {
-        Text("Number of Notifications")
-        TextField(
+        OutlinedTextField(
             value = numberOfNotifications.toString(),
+            label = {
+                Text("Number of Notifications")
+            },
             onValueChange = { value ->
                 val number = value.toIntOrNull() ?: 0
                 onNumberChange(number)
@@ -127,7 +199,7 @@ fun DaysOfWeekSelector(
     selectedDays: Set<String>,
     onDayToggle: (String) -> Unit
 ) {
-    val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+    val daysOfWeek = Constants.DAYS_OF_WEEK_ABBR
 
     Row(
         modifier = Modifier
@@ -151,10 +223,35 @@ fun DaysOfWeekSelector(
                 Text(
                     text = day,
                     color = contentColor,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun NotificationsSettingsPreview() {
+    SettingsContent(
+        startTime = "8:00",
+        endTime = "20:00",
+        selectedDays = setOf("Mon", "Tue"),
+        numberOfNotifications = 3,
+        sliderPosition = 2f to 4f,
+        notificationsEnabled = true,
+        toggleNotificationEnabled = { /*TODO*/ },
+        onSliderValueChange = {},
+        setNumberOfNotifications = {}
+    ) {
+
+    }
+}
+
+@Preview
+@Composable
+private fun DaysWeekSelectorPreview() {
+//    DaysOfWeekSelector(selectedDays = setOf("Mon", "Tue")) {
+//
+//    }
+}

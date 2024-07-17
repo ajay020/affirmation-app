@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
@@ -27,6 +28,9 @@ class UserPreferencesRepository(
         val START_TIME = stringPreferencesKey("start_time")
         val END_TIME = stringPreferencesKey("end_time")
         val SELECTED_DAYS = stringSetPreferencesKey("selected_days")
+        val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
+        val START_TIME_SLIDER = floatPreferencesKey("start_time_slider")
+        val END_TIME_SLIDER = floatPreferencesKey("end_time_slider")
 
         const val TAG = "UserPreferencesRepo"
     }
@@ -75,6 +79,36 @@ class UserPreferencesRepository(
             preferences[SELECTED_DAYS] = selectedDays
         }
     }
+
+    suspend fun saveNotificationsEnabled(notificationsEnabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[NOTIFICATIONS_ENABLED] = notificationsEnabled
+        }
+    }
+
+    suspend fun saveSliderValues(start: Float, end: Float) {
+        dataStore.edit { preferences ->
+            preferences[START_TIME_SLIDER] = start
+            preferences[END_TIME_SLIDER] = end
+//            preferences[START_TIME] = start.toString()
+//            preferences[END_TIME] = end.toString()
+        }
+    }
+
+    val sliderValues: Flow<Pair<Float, Float>> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                Log.e(TAG, "Error reading preferences.", exception)
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            val start = preferences[START_TIME_SLIDER] ?: 0f
+            val end = preferences[END_TIME_SLIDER] ?: 0f
+            start to end
+        }
 
     // Read notification settings
     val numberOfNotifications: Flow<Int> = dataStore.data
@@ -130,4 +164,18 @@ class UserPreferencesRepository(
             Log.d(TAG, "Loaded Selected Days: $selectedDays")
             selectedDays
         }
+
+    val notificationsEnabled: Flow<Boolean> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }
+        .map { preferences ->
+            preferences[NOTIFICATIONS_ENABLED] ?: false
+        }
+
 }

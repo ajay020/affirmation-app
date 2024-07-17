@@ -5,9 +5,13 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.example.affirmwell.data.AppContainer
 import com.example.affirmwell.data.AppDataContainer
 import com.example.affirmwell.data.UserPreferencesRepository
+import com.example.affirmwell.worker.AffirmationNotificationManager
+import com.example.affirmwell.worker.CustomWorkerFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,6 +30,7 @@ class AffirmationApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     lateinit var container: AppContainer
     lateinit var userPreferencesRepository: UserPreferencesRepository
+    lateinit var affirmationNotificationManager: AffirmationNotificationManager
 
     override fun onCreate() {
         super.onCreate()
@@ -36,5 +41,13 @@ class AffirmationApplication : Application() {
         applicationScope.launch(Dispatchers.IO) {
             container.affirmationRepository.initializeDefaultAffirmations(this@AffirmationApplication)
         }
+
+        // Inject user preference repository instance into notification worker
+        val customWorkerFactory = CustomWorkerFactory(userPreferencesRepository)
+        val config = Configuration.Builder().setWorkerFactory(customWorkerFactory).build()
+        WorkManager.initialize(this, config)
+
+        affirmationNotificationManager = AffirmationNotificationManager(this, userPreferencesRepository)
+        affirmationNotificationManager.scheduleNotifications()
     }
 }

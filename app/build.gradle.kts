@@ -84,6 +84,9 @@ dependencies {
     // Data store
     implementation(libs.androidx.datastore.preferences)
 
+    // WorkManager dependency
+    implementation(libs.androidx.work.runtime.ktx)
+
 
 
     // test

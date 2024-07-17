@@ -78,12 +78,14 @@ fun MainScreen(
             Box(
                 modifier = Modifier
             ) {
-                Image(
-                    painter = painterResource(id = backgroundImageRes),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                backgroundImageRes?.let {
+                    Image(
+                        painter = painterResource(id = backgroundImageRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
                 Column {
                     AffirmationPager(
