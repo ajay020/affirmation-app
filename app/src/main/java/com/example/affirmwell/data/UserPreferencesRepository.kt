@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.example.affirmwell.R
+import com.example.affirmwell.model.Category
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -31,6 +32,7 @@ class UserPreferencesRepository(
         val NOTIFICATIONS_ENABLED = booleanPreferencesKey("notifications_enabled")
         val START_TIME_SLIDER = floatPreferencesKey("start_time_slider")
         val END_TIME_SLIDER = floatPreferencesKey("end_time_slider")
+        val CATEGORY = stringPreferencesKey("category")
 
         const val TAG = "UserPreferencesRepo"
     }
@@ -90,8 +92,12 @@ class UserPreferencesRepository(
         dataStore.edit { preferences ->
             preferences[START_TIME_SLIDER] = start
             preferences[END_TIME_SLIDER] = end
-//            preferences[START_TIME] = start.toString()
-//            preferences[END_TIME] = end.toString()
+        }
+    }
+
+    suspend fun saveCategoryPreference(category: Category) {
+        dataStore.edit { preferences ->
+            preferences[CATEGORY] = category.name
         }
     }
 

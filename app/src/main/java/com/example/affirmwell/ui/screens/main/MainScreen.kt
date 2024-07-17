@@ -9,12 +9,14 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -35,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.affirmwell.R
 import com.example.affirmwell.data.Affirmation
+import com.example.affirmwell.model.Category
 import com.example.affirmwell.utils.Utils
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -44,8 +48,12 @@ fun MainScreen(
     viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory)
 ) {
     val affirmations by viewModel.affirmations.collectAsState()
+    val categories = Utils.catagories
     val backgroundImageRes by viewModel.backgroundImageRes.collectAsState(initial = R.drawable.img1)
+    val selectedCategory by viewModel.selectedCategory.collectAsState(initial = categories.first())
+
     var showImagePicker by remember { mutableStateOf(false) }
+    var showCategoryPicker by remember { mutableStateOf(false) }
 
 
     val pagerState = rememberPagerState(
@@ -68,7 +76,9 @@ fun MainScreen(
                 AffirmationBottomAppBar(
                     affirmation = affirmations[pagerState.currentPage],
                     onToggleFavorite = { viewModel.toggleFavorite(it) },
-                    onClick = { showImagePicker = true }
+                    onClick = { showImagePicker = true },
+                    selectedCategory = selectedCategory,
+                    onCategoryClick = { showCategoryPicker = true }
                 )
             }
 
@@ -86,7 +96,6 @@ fun MainScreen(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
-
                 Column {
                     AffirmationPager(
                         affirmations = affirmations,
@@ -116,7 +125,19 @@ fun MainScreen(
                 onDismissRequest = { showImagePicker = false },
                 onImageSelected = { imageRes ->
                     viewModel.saveBackgroundImageInDataStore(imageRes)
+
                 }
+            )
+        }
+
+        if (showCategoryPicker) {
+            CategoryPickerDialog(
+                categories = Utils.catagories,
+                selectedCategory = selectedCategory,
+                onCategorySelected = { category ->
+                    viewModel.saveCategoryInDataStore(category)
+                },
+                onDismissRequest = { showCategoryPicker = false }
             )
         }
     }
@@ -135,6 +156,13 @@ fun AffirmationPager(
     ) { page ->
         Box(
             modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startY = 0f,
+                        endY = Float.POSITIVE_INFINITY
+                    )
+                )
                 .fillMaxSize()
                 .padding(16.dp),
             contentAlignment = Alignment.Center
@@ -152,7 +180,9 @@ fun AffirmationBottomAppBar(
     modifier: Modifier = Modifier,
     affirmation: Affirmation,
     onToggleFavorite: (Affirmation) -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    selectedCategory: Category?,
+    onCategoryClick: () -> Unit
 ) {
     BottomAppBar(
         modifier = Modifier
@@ -167,9 +197,15 @@ fun AffirmationBottomAppBar(
                 contentDescription = "Favourite"
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
+//        Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { onClick() }) {
-            Icon(Icons.Filled.Menu, contentDescription = "Menu")
+            Icon(Icons.Default.Face, contentDescription = "Menu")
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Button(onClick = { onCategoryClick() }) {
+            Icon(Icons.Filled.Face, contentDescription = "Category")
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = "${selectedCategory?.name}")
         }
     }
 }
@@ -239,6 +275,16 @@ private fun MainScreenPreview() {
 @Preview
 @Composable
 fun MyBottomAppBarPreview() {
-//    AffirmationBottomAppBar()
+    AffirmationBottomAppBar(
+        affirmation = Affirmation(
+            text = "This is an example affirmation",
+            category = "Anxiety",
+            isFavorite = false
+        ),
+        onToggleFavorite = {},
+        onClick = {},
+        selectedCategory = Category(R.drawable.grad1, name = "General"),
+        onCategoryClick = {}
+    )
 //    AffirmationTopBar()
 }

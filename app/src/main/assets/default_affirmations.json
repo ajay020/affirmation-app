@@ -6,7 +6,10 @@
   ],
   "Health": [
     "I am healthy and full of energy.",
-    "My body is a temple of wellness."
+    "My body is a temple of wellness.",
+    "I nurture my body with nutritious food and exercise.",
+    "Every day, I am getting stronger and healthier.",
+    "I am grateful for my healthy body and mind."
   ],
   "Anxiety": [
     "I'm calm and patient.",
@@ -14,5 +17,33 @@
     "I accept my past.",
     "I let go of the worries about the future.",
     "I breath out anxiety and breath in calmness."
+  ],
+  "Anger": [
+    "I am in control of my emotions and I choose to remain calm.",
+    "I release my anger and embrace peace.",
+    "I respond to situations with patience and understanding.",
+    "I let go of anger and invite compassion into my heart.",
+    "I forgive myself and others, releasing all resentment."
+  ],
+  "Depression": [
+    "I am deserving of happiness and joy.",
+    "I am not my thoughts; I am much more.",
+    "I allow myself to feel my emotions and let them pass.",
+    "Every day is a new opportunity for positive change.",
+    "I am worthy of love and self-care."
+  ],
+  "Loneliness": [
+    "I am connected to the world around me.",
+    "I find comfort in my own company.",
+    "I attract meaningful and fulfilling relationships.",
+    "I am worthy of love and belonging.",
+    "I embrace solitude and use it as a time for growth."
+  ],
+  "Relationship": [
+    "I am worthy of love and respect in my relationships.",
+    "I communicate openly and honestly with my partner.",
+    "My relationship is built on trust and mutual understanding.",
+    "I attract positive and loving people into my life.",
+    "I am grateful for the love and support I receive from my partner."
   ]
 }

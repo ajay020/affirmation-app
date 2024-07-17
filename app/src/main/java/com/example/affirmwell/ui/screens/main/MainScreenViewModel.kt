@@ -15,6 +15,8 @@ import com.example.affirmwell.R
 import com.example.affirmwell.data.Affirmation
 import com.example.affirmwell.data.AffirmationRepository
 import com.example.affirmwell.data.UserPreferencesRepository
+import com.example.affirmwell.model.Category
+import com.example.affirmwell.utils.Utils
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -27,20 +29,21 @@ class MainScreenViewModel(
     val affirmations: StateFlow<List<Affirmation>> get() = _affirmations
 
     private val _backgroundImageRes = MutableStateFlow(R.drawable.img1)
-    var backgroundImageRes: StateFlow<Int>  = _backgroundImageRes
+    var backgroundImageRes: StateFlow<Int> = _backgroundImageRes
 
-    private val _favoriteAffirmations = MutableStateFlow<List<Affirmation>>(emptyList())
-    val favoriteAffirmations: StateFlow<List<Affirmation>> get() = _favoriteAffirmations
+    private val _selectedCategory = MutableStateFlow<Category>(Utils.catagories.first())
+    val selectedCategory: StateFlow<Category?> get() = _selectedCategory
 
-    private fun loadAffirmationsByCategory(category: String) {
+
+    private fun loadAffirmationsByCategory(categoryName: String) {
         viewModelScope.launch {
-            _affirmations.value = repository.getAffirmationsByCategory(category)
+            _affirmations.value = repository.getAffirmationsByCategory(categoryName)
             Log.d("AffirmationViewModel", "Affirmations loaded: $affirmations.value")
         }
     }
 
     init {
-        loadAffirmationsByCategory("Anxiety")
+        selectedCategory.value?.let { loadAffirmationsByCategory(it.name) }
         viewModelScope.launch {
             val backgroundImageRes =
                 userPreferencesRepository.backgroundImageRes.collect { backgroundImageRes ->
@@ -77,11 +80,19 @@ class MainScreenViewModel(
         }
     }
 
-    fun loadFavoriteAffirmations() {
+    fun saveCategoryInDataStore(category: Category) {
+        _selectedCategory.value = category
         viewModelScope.launch {
-            _favoriteAffirmations.value = repository.getAffirmations()
+            userPreferencesRepository.saveCategoryPreference(category)
+            loadAffirmationsByCategory(category.name)
         }
     }
+
+//    fun loadFavoriteAffirmations() {
+//        viewModelScope.launch {
+//            _favoriteAffirmations.value = repository.getAffirmations()
+//        }
+//    }
 
     companion object {
         var Factory: ViewModelProvider.Factory = viewModelFactory {
