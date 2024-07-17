@@ -47,7 +47,8 @@ class AffirmationApplication : Application() {
         val config = Configuration.Builder().setWorkerFactory(customWorkerFactory).build()
         WorkManager.initialize(this, config)
 
-        affirmationNotificationManager = AffirmationNotificationManager(this, userPreferencesRepository)
+        affirmationNotificationManager =
+            AffirmationNotificationManager(this, userPreferencesRepository)
         affirmationNotificationManager.scheduleNotifications()
     }
 }

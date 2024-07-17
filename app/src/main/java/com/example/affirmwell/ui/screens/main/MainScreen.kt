@@ -1,5 +1,6 @@
 package com.example.affirmwell.ui.screens.main
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,6 +42,8 @@ import com.example.affirmwell.data.Affirmation
 import com.example.affirmwell.model.Category
 import com.example.affirmwell.utils.Utils
 
+val TAG = "MainScreen"
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
@@ -64,6 +67,15 @@ fun MainScreen(
         }
     )
 
+    LaunchedEffect(selectedCategory?.name) {
+        viewModel.loadAffirmationsByCategory(selectedCategory?.name ?: "")
+        Log.d(
+            TAG,
+            " currentPage: ${pagerState.currentPage} pageCount: ${pagerState.pageCount}  Affirmations: $affirmations"
+        )
+        pagerState.scrollToPage(0)
+    }
+
     Scaffold(
         topBar = {
             AffirmationTopBar(
@@ -72,15 +84,13 @@ fun MainScreen(
             )
         },
         bottomBar = {
-            if (affirmations.isNotEmpty()) {
-                AffirmationBottomAppBar(
-                    affirmation = affirmations[pagerState.currentPage],
-                    onToggleFavorite = { viewModel.toggleFavorite(it) },
-                    onClick = { showImagePicker = true },
-                    selectedCategory = selectedCategory,
-                    onCategoryClick = { showCategoryPicker = true }
-                )
-            }
+            AffirmationBottomAppBar(
+                affirmation = affirmations[pagerState.currentPage],
+                onToggleFavorite = { viewModel.toggleFavorite(it) },
+                onClick = { showImagePicker = true },
+                selectedCategory = selectedCategory,
+                onCategoryClick = { showCategoryPicker = true }
+            )
 
         }
     ) {

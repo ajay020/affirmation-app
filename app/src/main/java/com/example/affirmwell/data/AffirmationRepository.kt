@@ -9,4 +9,5 @@ interface AffirmationRepository {
     suspend fun initializeDefaultAffirmations(context: Context)
     suspend fun updateAffirmation(affirmation: Affirmation)
     suspend fun getAffirmations(): List<Affirmation>
+    suspend fun isDatabaseEmpty(): Boolean
 }

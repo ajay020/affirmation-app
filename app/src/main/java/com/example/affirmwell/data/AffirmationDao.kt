@@ -22,4 +22,7 @@ interface AffirmationDao {
 
     @Query("SELECT * FROM affirmations WHERE isFavorite = 1")
     suspend fun getFavoriteAffirmations(): List<Affirmation>
+
+    @Query("SELECT COUNT(*) FROM affirmations")
+    suspend fun getAffirmationsCount(): Int
 }

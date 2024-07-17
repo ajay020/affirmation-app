@@ -5,14 +5,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao  ) : AffirmationRepository {
+class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao) :
+    AffirmationRepository {
 
     override suspend fun initializeDefaultAffirmations(context: Context) {
-        withContext(Dispatchers.IO) {
-            val inputStream = context.assets.open("default_affirmations.json")
-            val json = inputStream.bufferedReader().use { it.readText() }
-            val affirmations = parseAffirmations(json)
-            affirmationDao.insertAffirmations(affirmations)
+
+        if (isDatabaseEmpty()) {
+            withContext(Dispatchers.IO) {
+                val inputStream = context.assets.open("default_affirmations.json")
+                val json = inputStream.bufferedReader().use { it.readText() }
+                val affirmations = parseAffirmations(json)
+                affirmationDao.insertAffirmations(affirmations)
+            }
         }
     }
 
@@ -23,6 +27,11 @@ class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao  ) : 
     override suspend fun getAffirmations(): List<Affirmation> {
         return affirmationDao.getFavoriteAffirmations()
     }
+
+    override suspend fun isDatabaseEmpty(): Boolean {
+        return affirmationDao.getAffirmationsCount() == 0
+    }
+
 
     private fun parseAffirmations(json: String): List<Affirmation> {
         val jsonObject = JSONObject(json)

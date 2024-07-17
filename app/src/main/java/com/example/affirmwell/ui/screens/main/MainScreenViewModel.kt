@@ -35,7 +35,7 @@ class MainScreenViewModel(
     val selectedCategory: StateFlow<Category?> get() = _selectedCategory
 
 
-    private fun loadAffirmationsByCategory(categoryName: String) {
+    fun loadAffirmationsByCategory(categoryName: String) {
         viewModelScope.launch {
             _affirmations.value = repository.getAffirmationsByCategory(categoryName)
             Log.d("AffirmationViewModel", "Affirmations loaded: $affirmations.value")
@@ -70,7 +70,7 @@ class MainScreenViewModel(
         viewModelScope.launch {
             val updatedAffirmation = affirmation.copy(isFavorite = !affirmation.isFavorite)
             repository.updateAffirmation(updatedAffirmation)
-            loadAffirmationsByCategory(affirmation.category)
+            selectedCategory.value?.let { loadAffirmationsByCategory(it.name) }
         }
     }
 
@@ -84,7 +84,7 @@ class MainScreenViewModel(
         _selectedCategory.value = category
         viewModelScope.launch {
             userPreferencesRepository.saveCategoryPreference(category)
-            loadAffirmationsByCategory(category.name)
+//            loadAffirmationsByCategory(category.name)
         }
     }
 
