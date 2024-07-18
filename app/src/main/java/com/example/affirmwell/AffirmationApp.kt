@@ -1,21 +1,20 @@
 package com.example.affirmwell
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.affirmwell.ui.screens.addAffirmation.AddAffirmationScreen
 import com.example.affirmwell.ui.screens.main.MainScreen
 import com.example.affirmwell.ui.screens.notificationSetting.NotificationSettingsScreen
 import com.example.affirmwell.ui.screens.settings.SettingsScreen
 
-sealed class Screens(val route: String ){
+sealed class Screens(val route: String) {
     object MainScreen : Screens("main")
     object SettingsScreen : Screens("settings")
     object NotificationSettingsScreen : Screens("notification_settings")
-
+    object AddAffirmationScreen : Screens("add_affirmation")
 }
 
 @Composable
@@ -33,9 +32,9 @@ fun AffirmationApp(modifier: Modifier = Modifier) {
         }
         composable(route = Screens.SettingsScreen.route) {
             SettingsScreen(
-                onNavigateBack = { /*TODO*/ },
-                onSetNotificationTime = { navController.navigate( Screens.NotificationSettingsScreen.route) },
-                onAddPersonalAffirmation = { /*TODO*/ },
+                onNavigateBack = { navController.popBackStack() },
+                onSetNotificationTime = { navController.navigate(Screens.NotificationSettingsScreen.route) },
+                onAddPersonalAffirmation = { navController.navigate(Screens.AddAffirmationScreen.route) },
                 onAboutApp = { /*TODO*/ },
                 onLanguage = { /*TODO*/ }) {
             }
@@ -45,5 +44,11 @@ fun AffirmationApp(modifier: Modifier = Modifier) {
                 onNavigateBack = { navController.popBackStack() }
             )
         }
+        composable(Screens.AddAffirmationScreen.route) {
+            AddAffirmationScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
     }
 }

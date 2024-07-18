@@ -17,52 +17,44 @@ import com.example.affirmwell.data.AffirmationRepository
 import com.example.affirmwell.data.UserPreferencesRepository
 import com.example.affirmwell.model.Category
 import com.example.affirmwell.utils.Utils
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
     val repository: AffirmationRepository,
     val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-    private val _affirmations = MutableStateFlow<List<Affirmation>>(emptyList())
-    val affirmations: StateFlow<List<Affirmation>> get() = _affirmations
+    val affirmations = MutableStateFlow<List<Affirmation>>(emptyList())
 
     private val _backgroundImageRes = MutableStateFlow(R.drawable.img1)
     var backgroundImageRes: StateFlow<Int> = _backgroundImageRes
 
-    private val _selectedCategory = MutableStateFlow<Category>(Utils.catagories.first())
+    private val _selectedCategory = MutableStateFlow(Utils.catagories.first())
     val selectedCategory: StateFlow<Category?> get() = _selectedCategory
 
 
     fun loadAffirmationsByCategory(categoryName: String) {
         viewModelScope.launch {
-            _affirmations.value = repository.getAffirmationsByCategory(categoryName)
-            Log.d("AffirmationViewModel", "Affirmations loaded: $affirmations.value")
+            repository.getAffirmationsByCategory(categoryName).stateIn(
+                viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            ).collect {
+                affirmations.value = it
+            }
         }
     }
 
     init {
         selectedCategory.value?.let { loadAffirmationsByCategory(it.name) }
         viewModelScope.launch {
-            val backgroundImageRes =
-                userPreferencesRepository.backgroundImageRes.collect { backgroundImageRes ->
-                    _backgroundImageRes.value = backgroundImageRes
-                }
-            Log.d("MainScreenViewModel", "BackgroundImageRes: $backgroundImageRes")
-        }
-    }
-
-    fun addCustomAffirmation(text: String, category: String) {
-        viewModelScope.launch {
-            repository.addCustomAffirmation(
-                Affirmation(
-                    text = text,
-                    category = category,
-                    isCustom = true
-                )
-            )
-            loadAffirmationsByCategory(category)
+            userPreferencesRepository.backgroundImageRes.collect { backgroundImageRes ->
+                _backgroundImageRes.value = backgroundImageRes
+            }
         }
     }
 
@@ -70,7 +62,6 @@ class MainScreenViewModel(
         viewModelScope.launch {
             val updatedAffirmation = affirmation.copy(isFavorite = !affirmation.isFavorite)
             repository.updateAffirmation(updatedAffirmation)
-            selectedCategory.value?.let { loadAffirmationsByCategory(it.name) }
         }
     }
 
@@ -84,15 +75,8 @@ class MainScreenViewModel(
         _selectedCategory.value = category
         viewModelScope.launch {
             userPreferencesRepository.saveCategoryPreference(category)
-//            loadAffirmationsByCategory(category.name)
         }
     }
-
-//    fun loadFavoriteAffirmations() {
-//        viewModelScope.launch {
-//            _favoriteAffirmations.value = repository.getAffirmations()
-//        }
-//    }
 
     companion object {
         var Factory: ViewModelProvider.Factory = viewModelFactory {

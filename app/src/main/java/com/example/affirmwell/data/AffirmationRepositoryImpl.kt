@@ -1,9 +1,14 @@
 package com.example.affirmwell.data
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+
+val TAG = "AffirmationRepository"
 
 class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao) :
     AffirmationRepository {
@@ -24,6 +29,11 @@ class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao) :
         affirmationDao.updateAffirmation(affirmation)
     }
 
+    override suspend fun deleteAffirmation(affirmation: Affirmation) {
+        affirmationDao.deleteAffirmation(affirmation)
+    }
+
+
     override suspend fun getAffirmations(): List<Affirmation> {
         return affirmationDao.getFavoriteAffirmations()
     }
@@ -31,7 +41,6 @@ class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao) :
     override suspend fun isDatabaseEmpty(): Boolean {
         return affirmationDao.getAffirmationsCount() == 0
     }
-
 
     private fun parseAffirmations(json: String): List<Affirmation> {
         val jsonObject = JSONObject(json)
@@ -49,7 +58,7 @@ class AffirmationRepositoryImpl(private val affirmationDao: AffirmationDao) :
         return affirmations
     }
 
-    override suspend fun getAffirmationsByCategory(category: String): List<Affirmation> {
+    override fun getAffirmationsByCategory(category: String): Flow<List<Affirmation>> {
         return affirmationDao.getAffirmationsByCategory(category)
     }
 
