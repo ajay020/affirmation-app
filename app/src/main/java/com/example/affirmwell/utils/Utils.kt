@@ -22,13 +22,14 @@ object Utils {
         Category(R.drawable.grad4, name = "Anger"),
         Category(R.drawable.grad5, name = "Depression"),
         Category(R.drawable.grad6, name = "Loneliness"),
-        Category(R.drawable.grad7, name = "Stress"),
-        Category(R.drawable.img1, name = "Love"),
-        Category(R.drawable.grad2, name = "Family"),
-        Category(R.drawable.grad3, name = "Career"),
-        Category(R.drawable.grad4, name = "Self-care"),
-        Category(R.drawable.grad5, name = "Self-Esteem"),
         Category(R.drawable.grad6, name = "Relationship"),
+
+//        Category(R.drawable.grad7, name = "Stress"),
+//        Category(R.drawable.img1, name = "Love"),
+//        Category(R.drawable.grad2, name = "Family"),
+//        Category(R.drawable.grad3, name = "Career"),
+//        Category(R.drawable.grad4, name = "Self-care"),
+//        Category(R.drawable.grad5, name = "Self-Esteem"),
     )
 
 

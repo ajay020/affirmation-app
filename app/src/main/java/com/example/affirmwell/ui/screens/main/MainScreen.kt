@@ -84,14 +84,15 @@ fun MainScreen(
             )
         },
         bottomBar = {
-            AffirmationBottomAppBar(
-                affirmation = affirmations[pagerState.currentPage],
-                onToggleFavorite = { viewModel.toggleFavorite(it) },
-                onClick = { showImagePicker = true },
-                selectedCategory = selectedCategory,
-                onCategoryClick = { showCategoryPicker = true }
-            )
-
+            if (affirmations.isNotEmpty()) {
+                AffirmationBottomAppBar(
+                    affirmation = affirmations[pagerState.currentPage],
+                    onToggleFavorite = { viewModel.toggleFavorite(it) },
+                    onClick = { showImagePicker = true },
+                    selectedCategory = selectedCategory,
+                    onCategoryClick = { showCategoryPicker = true }
+                )
+            }
         }
     ) {
         if (affirmations.isNotEmpty()) {
