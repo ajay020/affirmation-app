@@ -40,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.6"
@@ -73,7 +74,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // room
-    implementation(libs.androidx.room.runtime) // Use the latest version
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx) // Use the latest version
     annotationProcessor(libs.androidx.room.compiler) // For annotation processing
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)

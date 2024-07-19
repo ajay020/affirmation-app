@@ -69,10 +69,6 @@ fun MainScreen(
 
     LaunchedEffect(selectedCategory?.name) {
         viewModel.loadAffirmationsByCategory(selectedCategory?.name ?: "")
-        Log.d(
-            TAG,
-            " currentPage: ${pagerState.currentPage} pageCount: ${pagerState.pageCount}  Affirmations: $affirmations"
-        )
         pagerState.scrollToPage(0)
     }
 
@@ -99,7 +95,7 @@ fun MainScreen(
             Box(
                 modifier = Modifier
             ) {
-                backgroundImageRes?.let {
+                backgroundImageRes.let {
                     Image(
                         painter = painterResource(id = backgroundImageRes),
                         contentDescription = null,
@@ -180,7 +176,8 @@ fun AffirmationPager(
         ) {
             Text(
                 text = affirmations[page].text,
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(16.dp)
             )
         }
     }
