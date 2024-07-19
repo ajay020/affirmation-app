@@ -1,4 +1,4 @@
-package com.example.affirmwell
+package com.example.affirmwell.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
