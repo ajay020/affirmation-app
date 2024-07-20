@@ -1,13 +1,16 @@
 package com.example.affirmwell.ui.screens.main
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Face
@@ -23,16 +26,20 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +51,7 @@ import com.example.affirmwell.R
 import com.example.affirmwell.data.Affirmation
 import com.example.affirmwell.model.Category
 import com.example.affirmwell.utils.Utils
+import kotlinx.coroutines.launch
 
 val TAG = "MainScreen"
 
@@ -52,11 +60,13 @@ fun MainScreen(
     onNavigateToSettings: () -> Unit,
     viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.Factory)
 ) {
+
     val affirmations by viewModel.affirmations.collectAsState()
     val backgroundImageRes by viewModel.backgroundImageRes.collectAsState(initial = R.drawable.img1)
     val selectedCategory by viewModel.selectedCategory.collectAsState()
 
-    Log.d(TAG, "MainScreen: run called ")
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(selectedCategory?.name) {
         viewModel.loadAffirmationsByCategory(selectedCategory?.name ?: "")
@@ -84,6 +94,13 @@ fun MainScreen(
 
                 onToggleFavourite = {
                     viewModel.toggleFavorite(it)
+                },
+                onShareClick = { affirmation ->
+                    coroutineScope.launch {
+//                        Utils.shareText(context, affirmation.text)
+                        Utils.shareTextOverImage(context, affirmation.text, backgroundImageRes)
+                        Toast.makeText(context, "Sharing affirmation...", Toast.LENGTH_SHORT).show()
+                    }
                 }
             )
         } else {
@@ -110,7 +127,8 @@ fun MainScreenContent(
     selectedCategory: Category?,
     saveBackgroundImageInDataStore: (Int) -> Unit,
     saveCategoryInDataStore: (Category) -> Unit,
-    onToggleFavourite: (Affirmation) -> Unit
+    onToggleFavourite: (Affirmation) -> Unit,
+    onShareClick: (Affirmation) -> Unit
 ) {
     Log.d(TAG, "MainScreenContent: run called ")
 
@@ -192,7 +210,8 @@ fun MainScreenContent(
                 onToggleFavorite = { onToggleFavourite(affirmations[pagerState.currentPage]) },
                 onSelectBackgroundImageClick = { showImagePicker = true },
                 selectedCategory = selectedCategory,
-                onCategoryClick = { showCategoryPicker = true }
+                onCategoryClick = { showCategoryPicker = true },
+                onShareClick = onShareClick
             )
         }
     }
@@ -239,26 +258,53 @@ fun AffirmationBottomAppBar(
     onToggleFavorite: (Affirmation) -> Unit,
     onSelectBackgroundImageClick: () -> Unit,
     selectedCategory: Category?,
-    onCategoryClick: () -> Unit
+    onCategoryClick: () -> Unit,
+    onShareClick: (Affirmation) -> Unit
 ) {
     Row(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 16.dp),
     ) {
-        IconButton(onClick = { /* Handle menu click */ }) {
-            Icon(Icons.Filled.Share, contentDescription = "Share")
+        IconButton(
+            onClick = { onShareClick(affirmation) },
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp) // Adjust the size as needed
+                    .background(Color.White, shape = CircleShape)
+                    .border(2.dp, Color.Gray, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Filled.Share,
+                    contentDescription = "Share",
+                    modifier = Modifier
+                        .padding(0.dp)
+                )
+            }
         }
         IconButton(onClick = { onToggleFavorite(affirmation) }) {
-            Icon(
-                if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = "Favourite"
-            )
+            Box(
+                modifier = Modifier
+                    .size(48.dp) // Adjust the size as needed
+                    .background(Color.White, shape = CircleShape)
+                    .border(2.dp, Color.Gray, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    contentDescription = "Favourite",
+                    tint = Color.Red // Optional: Change the icon color
+                )
+            }
         }
+
         IconButton(onClick = { onSelectBackgroundImageClick() }) {
-            Icon(Icons.Default.Face, contentDescription = "Menu")
+            Icon(Icons.Default.Face, contentDescription = "Theme")
         }
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = { onCategoryClick() }) {
+
+        OutlinedButton(onClick = { onCategoryClick() }) {
             Icon(Icons.Filled.Face, contentDescription = "Category")
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = "${selectedCategory?.name}")
@@ -321,7 +367,8 @@ private fun MainScreenPreview() {
         selectedCategory = null,
         saveBackgroundImageInDataStore = {},
         saveCategoryInDataStore = {},
-        onToggleFavourite = {}
+        onToggleFavourite = {},
+        onShareClick = {}
     )
 }
 
