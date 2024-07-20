@@ -1,10 +1,27 @@
 {
-  "Self care": [
-    "You are strong.",
-    "You are capable."
+  "SelfCare": [
+    "I prioritize my well-being and take time to care for myself.",
+    "I am worthy of love, respect, and care.",
+    "Taking time for myself helps me recharge and stay balanced.",
+    "I listen to my body's needs and honor them.",
+    "Self-care is not selfish; it is essential for my happiness and health.",
+    "I give myself permission to rest and relax without guilt.",
+    "I am deserving of moments of peace and tranquility.",
+    "By caring for myself, I am better able to care for others.",
+    "I celebrate and appreciate the small acts of self-care I perform each day.",
+    "I nurture my mind, body, and spirit with kindness and compassion."
   ],
   "Health": [
-    "I am healthy and full of energy."
+    "I am grateful for my strong and healthy body.",
+    "Every day, I make choices that support my well-being.",
+    "I am committed to living a healthy and balanced life.",
+    "My body is resilient and capable of healing itself.",
+    "I nourish my body with healthy foods and positive thoughts.",
+    "I honor my body by staying active and energetic.",
+    "I am in tune with my body's needs and give it what it requires.",
+    "My mind is calm, and my body is relaxed and at ease.",
+    "I embrace a lifestyle that promotes my overall health and vitality.",
+    "I am thankful for the gift of good health and cherish it daily."
   ],
   "Anxiety": [
     "I'm calm and patient.",
@@ -12,6 +29,30 @@
     "I accept my past.",
     "I let go of the worries about the future.",
     "I breath out anxiety and breath in calmness."
+  ],
+  "Heartbreak": [
+    "I am healing and growing stronger with each passing day.",
+    "I deserve love and happiness, and I am open to receiving both.",
+    "My heart is resilient and will mend with time and self-care.",
+    "I release the pain and embrace the lessons learned from this experience.",
+    "I am worthy of a healthy, fulfilling relationship.",
+    "I trust that the universe has a plan for me and my happiness.",
+    "I am allowing myself to feel and process my emotions with compassion.",
+    "I am surrounded by love and support from those who care about me.",
+    "I am grateful for the strength I gain from overcoming this heartbreak.",
+    "I am open to new possibilities and experiences that bring me joy and growth."
+  ],
+  "Positive Thinking": [
+    "I choose to focus on the positive aspects of my life.",
+    "My positive thoughts create positive outcomes.",
+    "I am in control of my thoughts and emotions.",
+    "Every challenge is an opportunity for growth and learning.",
+    "I radiate positivity and attract positive experiences.",
+    "I believe in my ability to create the life I desire.",
+    "I am grateful for the abundance that surrounds me.",
+    "I embrace optimism and let go of negativity.",
+    "I am surrounded by positive influences and supportive people.",
+    "My positive mindset empowers me to achieve my goals."
   ],
   "Anger": [
     "I am in control of my emotions and I choose to remain calm.",

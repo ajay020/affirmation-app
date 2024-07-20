@@ -23,21 +23,20 @@ object Utils {
         R.drawable.grad3,
         R.drawable.grad4,
         R.drawable.grad5,
-        R.drawable.grad6,
-        R.drawable.grad7,
         R.drawable.img1,
     )
 
     var catagories = listOf(
-        Category(R.drawable.grad1, name = "Self-Care"),
-        Category(R.drawable.grad7, name = "My Affirmations"),
-        Category(R.drawable.grad2, name = "Health"),
-        Category(R.drawable.grad3, name = "Anxiety"),
-        Category(R.drawable.grad4, name = "Heartbreak"),
-        Category(R.drawable.grad5, name = "Depression"),
-        Category(R.drawable.grad6, name = "Loneliness"),
-        Category(R.drawable.grad6, name = "Relationship"),
-        Category(R.drawable.grad7, name = "Anger"),
+        Category(R.drawable.self_care, name = "SelfCare"),
+        Category(R.drawable.my, name = "My Affirmations"),
+        Category(R.drawable.health, name = "Health"),
+        Category(R.drawable.heartbroken, name = "Heartbreak"),
+        Category(R.drawable.positive_thinking, name = "Positive Thinking"),
+        Category(R.drawable.anxiety, name = "Anxiety"),
+        Category(R.drawable.depression, name = "Depression"),
+        Category(R.drawable.lonliness, name = "Loneliness"),
+        Category(R.drawable.relationship, name = "Relationship"),
+        Category(R.drawable.anger, name = "Anger"),
     )
 
     fun shareTextOverImage(context: Context, text: String, drawableResId: Int) {

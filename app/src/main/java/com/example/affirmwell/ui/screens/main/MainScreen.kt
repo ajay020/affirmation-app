@@ -280,7 +280,7 @@ fun AffirmationBottomAppBar(
                     modifier = Modifier
                         .size(48.dp) // Adjust the size as needed
                         .background(Color.White, shape = CircleShape)
-                        .border(2.dp, Color.Gray, shape = CircleShape),
+                        .border(1.dp, Color.Gray, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -295,7 +295,7 @@ fun AffirmationBottomAppBar(
                     modifier = Modifier
                         .size(48.dp) // Adjust the size as needed
                         .background(Color.White, shape = CircleShape)
-                        .border(2.dp, Color.Gray, shape = CircleShape),
+                        .border(1.dp, Color.Gray, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -310,9 +310,9 @@ fun AffirmationBottomAppBar(
         IconButton(onClick = { onSelectBackgroundImageClick() }) {
             Box(
                 modifier = Modifier
-                    .size(48.dp) // Adjust the size as needed
+                    .size(48.dp)
                     .background(Color.White, shape = CircleShape)
-                    .border(2.dp, Color.Gray, shape = CircleShape),
+                    .border(1.dp, Color.Gray, shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

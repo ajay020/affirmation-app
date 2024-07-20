@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -92,21 +95,16 @@ fun CategoryPickerDialog(
                             shape = RoundedCornerShape(16.dp),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .border(
-                                    width = 2.dp,
-                                    shape = RoundedCornerShape(16.dp),
-                                    color = if (selectedCategory?.name == category.name) Color.Black else Color.Transparent
-                                )
                                 .clickable {
                                     onCategorySelected(category)
                                 },
                         ) {
-                            Box (
+                            Box(
                                 contentAlignment = Alignment.BottomCenter,
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .background(Color.Black)
-                            ){
+                            ) {
                                 Image(
                                     painter = painterResource(id = category.imgRes),
                                     contentDescription = null,
@@ -126,12 +124,36 @@ fun CategoryPickerDialog(
                                             )
                                         )
                                 )
+
+                                if (selectedCategory?.name == category.name) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .align(Alignment.Center)
+                                            .background(
+                                                Color.Black.copy(alpha = 0.4f),
+                                                shape = CircleShape
+                                            )
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Check,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(48.dp)
+                                                .align(Alignment.Center)
+                                                .padding(8.dp),
+                                            tint = Color.Green
+                                        )
+                                    }
+                                }
+
+
                                 Text(
                                     text = category.name,
                                     color = Color.White,
                                     modifier = Modifier
                                         .align(Alignment.BottomCenter)
-                                        .padding( bottom = 12.dp)
+                                        .padding(bottom = 12.dp)
                                 )
                             }
                         }
@@ -149,7 +171,7 @@ private fun CategoryPickerPreview() {
 
     CategoryPickerDialog(
         categories = listOf(
-            Category(R.drawable.grad1, name = "General"),
+            Category(R.drawable.grad1, name = "Self care"),
             Category(R.drawable.grad2, name = "Health"),
             Category(R.drawable.grad3, name = "Anxiety"),
             Category(R.drawable.grad1, name = "General"),
