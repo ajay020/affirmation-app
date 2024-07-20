@@ -2,6 +2,7 @@ package com.example.affirmwell.ui.screens.main
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,6 +12,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Face
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,16 +39,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -75,48 +83,44 @@ fun MainScreen(
         viewModel.loadAffirmationsByCategory(selectedCategory?.name ?: "")
     }
 
-    Scaffold(
-        topBar = {},
-        bottomBar = {}
-    ) {
-        if (affirmations.isNotEmpty()) {
+    Log.d(TAG, "MainScreen: affirmations: ${affirmations.size}")
 
-            MainScreenContent(
-                modifier = Modifier
-                    .padding(it),
-                backgroundImageRes = backgroundImageRes,
-                affirmations = affirmations,
-                onNavigateToSettings = onNavigateToSettings,
-                selectedCategory = selectedCategory,
-                saveBackgroundImageInDataStore = { imageRes ->
-                    viewModel.saveBackgroundImageInDataStore(imageRes)
-                },
-                saveCategoryInDataStore = { category ->
-                    viewModel.saveCategoryInDataStore(category)
-                },
+    Scaffold {
+        MainScreenContent(
+            modifier = Modifier
+                .padding(it),
+            backgroundImageRes = backgroundImageRes,
+            affirmations = affirmations,
+            onNavigateToSettings = onNavigateToSettings,
+            selectedCategory = selectedCategory,
+            saveBackgroundImageInDataStore = { imageRes ->
+                viewModel.saveBackgroundImageInDataStore(imageRes)
+            },
+            saveCategoryInDataStore = { category ->
+                viewModel.saveCategoryInDataStore(category)
+            },
 
-                onToggleFavourite = {
-                    viewModel.toggleFavorite(it)
-                },
-                onShareClick = { affirmation ->
-                    coroutineScope.launch {
-//                        Utils.shareText(context, affirmation.text)
-                        Utils.shareTextOverImage(context, affirmation.text, backgroundImageRes)
-                        Toast.makeText(context, "Sharing affirmation...", Toast.LENGTH_SHORT).show()
-                    }
+            onToggleFavourite = {
+                viewModel.toggleFavorite(it)
+            },
+            onShareClick = { affirmation ->
+                coroutineScope.launch {
+                    Utils.shareTextOverImage(context, affirmation.text, backgroundImageRes)
+                    Toast.makeText(context, "Sharing affirmation...", Toast.LENGTH_SHORT).show()
                 }
-            )
-        } else {
-            // Show a loading indicator or empty state
-            Box(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
             }
-        }
+        )
+//        } else {
+//            // Show a loading indicator or empty state
+//            Box(
+//                modifier = Modifier
+//                    .padding(it)
+//                    .fillMaxSize(),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                CircularProgressIndicator()
+//            }
+//        }
     }
 }
 
@@ -170,14 +174,12 @@ fun MainScreenContent(
     Box(
         modifier = modifier
     ) {
-        backgroundImageRes.let {
-            Image(
-                painter = painterResource(id = backgroundImageRes),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+        Image(
+            painter = painterResource(id = backgroundImageRes),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
 
         Column {
             AffirmationPager(
@@ -209,7 +211,7 @@ fun MainScreenContent(
             verticalAlignment = Alignment.Bottom
         ) {
             AffirmationBottomAppBar(
-                affirmation = affirmations[pagerState.currentPage],
+                affirmation = if (affirmations.isNotEmpty()) affirmations[pagerState.currentPage] else null,
                 onToggleFavorite = { onToggleFavourite(affirmations[pagerState.currentPage]) },
                 onSelectBackgroundImageClick = { showImagePicker = true },
                 selectedCategory = selectedCategory,
@@ -233,22 +235,24 @@ fun AffirmationPager(
     ) { page ->
         Box(
             modifier = Modifier
-//                .background(
-//                    brush = Brush.verticalGradient(
-//                        colors = listOf(Color.Transparent, Color.Black),
-//                        startY = 0f,
-//                        endY = Float.POSITIVE_INFINITY
-//                    )
-//                )
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startY = 50f,
+                        endY = Float.POSITIVE_INFINITY
+                    )
+                )
                 .fillMaxSize()
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = affirmations[page].text,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(16.dp),
-                textAlign = TextAlign.Center
+                modifier = Modifier
+                    .padding(16.dp),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                fontSize = 24.sp
             )
         }
     }
@@ -257,7 +261,7 @@ fun AffirmationPager(
 @Composable
 fun AffirmationBottomAppBar(
     modifier: Modifier = Modifier,
-    affirmation: Affirmation,
+    affirmation: Affirmation?,
     onToggleFavorite: (Affirmation) -> Unit,
     onSelectBackgroundImageClick: () -> Unit,
     selectedCategory: Category?,
@@ -268,34 +272,38 @@ fun AffirmationBottomAppBar(
         modifier = modifier
             .padding(horizontal = 8.dp, vertical = 16.dp),
     ) {
-        IconButton(
-            onClick = { onShareClick(affirmation) },
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp) // Adjust the size as needed
-                    .background(Color.White, shape = CircleShape)
-                    .border(2.dp, Color.Gray, shape = CircleShape),
-                contentAlignment = Alignment.Center
+        if (affirmation != null) {
+            IconButton(
+                onClick = { onShareClick(affirmation) },
             ) {
-                Icon(
-                    Icons.Filled.Share,
-                    contentDescription = "Share",
-                )
+                Box(
+                    modifier = Modifier
+                        .size(48.dp) // Adjust the size as needed
+                        .background(Color.White, shape = CircleShape)
+                        .border(2.dp, Color.Gray, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Filled.Share,
+                        contentDescription = "Share",
+                        tint = Color.DarkGray
+                    )
+                }
             }
-        }
-        IconButton(onClick = { onToggleFavorite(affirmation) }) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp) // Adjust the size as needed
-                    .background(Color.White, shape = CircleShape)
-                    .border(2.dp, Color.Gray, shape = CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Favourite",
-                )
+            IconButton(onClick = { onToggleFavorite(affirmation) }) {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp) // Adjust the size as needed
+                        .background(Color.White, shape = CircleShape)
+                        .border(2.dp, Color.Gray, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favourite",
+                        tint = Color.DarkGray
+                    )
+                }
             }
         }
 
@@ -309,16 +317,28 @@ fun AffirmationBottomAppBar(
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_wallpaper),
-                    contentDescription = "Change Background"
+                    contentDescription = "Change Background",
+                    tint = Color.DarkGray
                 )
             }
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        OutlinedButton(onClick = { onCategoryClick() }) {
-            Icon(Icons.Filled.Face, contentDescription = "Category")
+        OutlinedButton(
+            onClick = { onCategoryClick() },
+            colors = ButtonDefaults.outlinedButtonColors(Color.Black.copy(alpha = 0.1f)),
+        ) {
+            Icon(
+                Icons.Filled.Face,
+                contentDescription = "Category",
+                tint = Color.DarkGray
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "${selectedCategory?.name}")
+            Text(
+                text = "${selectedCategory?.name}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.DarkGray
+            )
         }
     }
 }
@@ -373,7 +393,7 @@ private fun MainScreenPreview() {
     )
 
     AffirmWellTheme(
-        darkTheme = false
+        darkTheme = true
     ) {
         MainScreenContent(
             backgroundImageRes = R.drawable.grad1,
