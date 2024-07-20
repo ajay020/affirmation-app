@@ -38,9 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.affirmwell.R
 import com.example.affirmwell.data.Affirmation
 import com.example.affirmwell.model.Category
+import com.example.affirmwell.ui.theme.AffirmWellTheme
 import com.example.affirmwell.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -278,8 +281,6 @@ fun AffirmationBottomAppBar(
                 Icon(
                     Icons.Filled.Share,
                     contentDescription = "Share",
-                    modifier = Modifier
-                        .padding(0.dp)
                 )
             }
         }
@@ -294,13 +295,23 @@ fun AffirmationBottomAppBar(
                 Icon(
                     if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = "Favourite",
-                    tint = Color.Red // Optional: Change the icon color
                 )
             }
         }
 
         IconButton(onClick = { onSelectBackgroundImageClick() }) {
-            Icon(Icons.Default.Face, contentDescription = "Theme")
+            Box(
+                modifier = Modifier
+                    .size(48.dp) // Adjust the size as needed
+                    .background(Color.White, shape = CircleShape)
+                    .border(2.dp, Color.Gray, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_wallpaper),
+                    contentDescription = "Change Background"
+                )
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
 
@@ -360,31 +371,20 @@ private fun MainScreenPreview() {
             isFavorite = false
         ),
     )
-    MainScreenContent(
-        backgroundImageRes = R.drawable.grad1,
-        affirmations = affirmations,
-        onNavigateToSettings = {},
-        selectedCategory = null,
-        saveBackgroundImageInDataStore = {},
-        saveCategoryInDataStore = {},
-        onToggleFavourite = {},
-        onShareClick = {}
-    )
-}
 
-@Preview
-@Composable
-fun MyBottomAppBarPreview() {
-//    AffirmationBottomAppBar(
-//        affirmation = Affirmation(
-//            text = "This is an example affirmation",
-//            category = "Anxiety",
-//            isFavorite = false
-//        ),
-//        onToggleFavorite = {},
-//        onClick = {},
-//        selectedCategory = Category(R.drawable.grad1, name = "General"),
-//        onCategoryClick = {}
-//    )
-//    AffirmationTopBar()
+    AffirmWellTheme(
+        darkTheme = false
+    ) {
+        MainScreenContent(
+            backgroundImageRes = R.drawable.grad1,
+            affirmations = affirmations,
+            onNavigateToSettings = {},
+            selectedCategory = null,
+            saveBackgroundImageInDataStore = {},
+            saveCategoryInDataStore = {},
+            onToggleFavourite = {},
+            onShareClick = {}
+        )
+    }
+
 }
