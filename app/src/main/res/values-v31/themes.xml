@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.AffirmWell" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.AffirmWell" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:windowSplashScreenBackground">@color/white</item>
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@color/purple_700</item>
         <item name="android:windowSplashScreenAnimationDuration">300</item>
-<!--        <item name="postSplashScreenTheme">@style/Theme.AffirmWell.NoActionBar</item>-->
     </style>
 
-    <!-- Immersive theme for your activity -->
-<!--    <style name="Theme.AffirmWell.Immersive" parent="Theme.AffirmWell">-->
-<!--&lt;!&ndash;        <item name="android:windowFullscreen">true</item>&ndash;&gt;-->
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
-<!--        <item name="android:windowTranslucentNavigation">true</item>-->
-<!--        <item name="android:windowNoTitle">true</item>-->
-<!--        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item> &lt;!&ndash; Handle display cutouts &ndash;&gt;-->
-<!--    </style>-->
+    <style name="Theme.AffirmWell.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">false</item>
+    </style>
 
 </resources>

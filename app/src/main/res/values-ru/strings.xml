@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AffirmWell</string>
+    <string name="settings">Настройки</string>
+    <string name="notifications">Уведомления</string>
+    <string name="add_personal_affirmation">Добавить личное утверждение</string>
+    <string name="language">Язык</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="back">Назад</string>
+</resources>

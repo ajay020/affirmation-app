@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AffirmWell</string>
+    <string name="settings">Einstellungen</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="add_personal_affirmation">Persönliche Bestätigung hinzufügen</string>
+    <string name="language">Sprache</string>
+    <string name="privacy_policy">Datenschutz-Bestimmungen</string>
+    <string name="back">Zurück</string>
+</resources>

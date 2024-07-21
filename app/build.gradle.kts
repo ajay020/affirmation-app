@@ -94,7 +94,8 @@ dependencies {
     // WorkManager dependency
     implementation(libs.androidx.work.runtime.ktx)
 
-
+    // icons
+    implementation (libs.androidx.material.icons.extended)
 
     // test
     testImplementation(libs.junit)

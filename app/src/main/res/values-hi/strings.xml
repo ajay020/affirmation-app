@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">अफिर्मवेल</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="notifications">सूचनाएं</string>
+    <string name="add_personal_affirmation">व्यक्तिगत पुष्टि जोड़ें</string>
+    <string name="language">भाषा</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="back">वापस</string>
+</resources>

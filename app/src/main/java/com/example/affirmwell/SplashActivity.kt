@@ -1,7 +1,7 @@
 package com.example.affirmwell
 
-import android.os.Bundle
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.ComponentActivity
 
 class SplashActivity : ComponentActivity() {
