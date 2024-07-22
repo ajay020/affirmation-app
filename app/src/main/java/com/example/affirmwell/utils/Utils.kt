@@ -18,6 +18,10 @@ import androidx.core.content.res.ResourcesCompat
 
 object Utils {
     var images = listOf(
+        R.drawable.grad9,
+        R.drawable.grad10,
+        R.drawable.grad11,
+        R.drawable.grad12,
         R.drawable.grad1,
         R.drawable.grad2,
         R.drawable.grad3,

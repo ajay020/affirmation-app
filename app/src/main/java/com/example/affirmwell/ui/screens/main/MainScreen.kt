@@ -279,14 +279,14 @@ fun AffirmationBottomAppBar(
                 Box(
                     modifier = Modifier
                         .size(48.dp) // Adjust the size as needed
-                        .background(Color.White, shape = CircleShape)
+                        .background(Color.Black.copy(alpha = 0.5f), shape = CircleShape)
                         .border(1.dp, Color.Gray, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         Icons.Filled.Share,
                         contentDescription = "Share",
-                        tint = Color.DarkGray
+                        tint = Color.Gray
                     )
                 }
             }
@@ -294,14 +294,14 @@ fun AffirmationBottomAppBar(
                 Box(
                     modifier = Modifier
                         .size(48.dp) // Adjust the size as needed
-                        .background(Color.White, shape = CircleShape)
+                        .background(Color.Black.copy(alpha = 0.5f), shape = CircleShape)
                         .border(1.dp, Color.Gray, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         if (affirmation.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "Favourite",
-                        tint = Color.DarkGray
+                        tint = Color.Gray
                     )
                 }
             }
@@ -311,14 +311,14 @@ fun AffirmationBottomAppBar(
             Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .background(Color.White, shape = CircleShape)
+                    .background(Color.Black.copy(alpha = 0.5f), shape = CircleShape)
                     .border(1.dp, Color.Gray, shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_wallpaper),
                     contentDescription = "Change Background",
-                    tint = Color.DarkGray
+                    tint = Color.Gray
                 )
             }
         }
@@ -326,18 +326,21 @@ fun AffirmationBottomAppBar(
 
         OutlinedButton(
             onClick = { onCategoryClick() },
-            colors = ButtonDefaults.outlinedButtonColors(Color.Black.copy(alpha = 0.1f)),
+            colors = ButtonDefaults.outlinedButtonColors(Color.Black.copy(alpha = 0.2f)),
+            border = ButtonDefaults.outlinedButtonBorder.copy(
+                width = 1.dp,
+            ),
         ) {
             Icon(
                 Icons.Filled.Face,
                 contentDescription = "Category",
-                tint = Color.DarkGray
+                tint = Color.Gray
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "${selectedCategory?.name}",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.DarkGray
+                color = Color.Gray
             )
         }
     }
@@ -361,7 +364,7 @@ fun FullScreenImagePickerDialog(
         ) {
             Column {
                 TopAppBar(
-                    title = { Text("Select Background Image") },
+                    title = { Text("Select Background") },
                     navigationIcon = {
                         IconButton(onClick = { onDismissRequest() }) {
                             Icon(Icons.Default.Close, contentDescription = "Close")
