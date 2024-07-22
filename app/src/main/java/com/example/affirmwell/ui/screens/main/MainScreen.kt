@@ -73,11 +73,13 @@ fun MainScreen(
 ) {
 
     val affirmations by viewModel.affirmations.collectAsState()
-    val backgroundImageRes by viewModel.backgroundImageRes.collectAsState(initial = R.drawable.img1)
+    val backgroundImageRes by viewModel.backgroundImageRes.collectAsState(initial = R.drawable.grad12)
     val selectedCategory by viewModel.selectedCategory.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    Log.d(TAG, "Selected Category: ${selectedCategory?.name} affirmations: $affirmations")
 
     LaunchedEffect(selectedCategory?.name) {
         viewModel.loadAffirmationsByCategory(selectedCategory?.name ?: "")

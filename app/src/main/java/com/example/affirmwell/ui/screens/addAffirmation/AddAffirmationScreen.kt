@@ -1,5 +1,6 @@
 package com.example.affirmwell.ui.screens.addAffirmation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,6 +56,8 @@ fun AddAffirmationScreen(
 ) {
     val affirmations by viewModel.affirmations.collectAsState()
 
+    Log.d(TAG, "AddAffirmationScreen: affirmations: ${affirmations}")
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -103,7 +106,7 @@ fun AddAffirmationBody(
             showDialog = false
             onAddAffirmation(
                 Affirmation(
-                    category = "My affirmations",
+                    category = "My Affirmations",
                     isCustom = true,
                     text = affirmationText
                 )

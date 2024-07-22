@@ -30,7 +30,7 @@ class MainScreenViewModel(
 ) : ViewModel() {
     val affirmations = MutableStateFlow<List<Affirmation>>(emptyList())
 
-    private val _backgroundImageRes = MutableStateFlow(R.drawable.img1)
+    private val _backgroundImageRes = MutableStateFlow(R.drawable.grad12)
     var backgroundImageRes: StateFlow<Int> = _backgroundImageRes
 
     private val _selectedCategory = MutableStateFlow(Utils.catagories.first())

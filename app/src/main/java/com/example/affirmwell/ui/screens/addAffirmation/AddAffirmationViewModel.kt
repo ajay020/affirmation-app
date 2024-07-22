@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class AddAffirmationViewModel(
     private val repository: AffirmationRepository
 ) : ViewModel() {
-    val affirmations = repository.getAffirmationsByCategory("My affirmations").stateIn(
+    val affirmations = repository.getAffirmationsByCategory("My Affirmations").stateIn(
         viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
